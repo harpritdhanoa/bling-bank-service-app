@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 const { Pool } = require("pg");
 dotenv.config();
-console.log(`Your connection string is ${process.env.CONNECTIONSTRING}`); // 8626
+//console.log(`Your connection string is ${process.env.CONNECTIONSTRING}`); // 8626
 
 const isProduction = process.env.NODE_ENV === 'production';
 
