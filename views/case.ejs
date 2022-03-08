@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Case</title>
+</head>
+
+<body>
+  <a href="/cases">Cases</a>
+  <a href="/users/logout">Logout</a>
+  <a href="/users/dashboard">Dashboard</a>
+  <h1>Case</h1>
+
+
+    <form action="/preventDefault" method="post">
+      <fieldset>
+      <% for (var i = 0; i < caseObj.length; i++) { %>
+        <label for="fname"><%= caseObj[i].label %>:</label>
+        <% if(caseObj[i].apiName == 'id') {%> 
+        <input  type="text" 
+                id="<%= caseObj[i].apiName %>" 
+                name="<%= caseObj[i].apiName %>" 
+                value="<%= caseObj[i].value %>"  readonly >             
+        <% }else{ %>
+          <input  type="text" 
+          id="<%= caseObj[i].apiName %>" 
+          name="<%= caseObj[i].apiName %>" 
+          value="<%= caseObj[i].value %>" >    
+          <% } %>      
+          <br>        
+      <% } %>  
+      <button id="updBtn" onClick="event.preventDefault();">Update Case</button>
+    </fieldset>
+    </form>
+ 
+
+  <!--
+    <% if (typeof message !== 'undefined' ) { %>
+    <p><%= message %></p>
+    <% } %>
+
+    <a href="/users/login">Login</a>
+    -->
+
+  <script>
+
+    let btn = document.querySelector('#updBtn');
+    btn.addEventListener('click', (e) => {
+      console.log(JSON.stringify(e.target.id));
+      makePostCall(e);
+      //makeRequestOld(e);
+    })
+
+    function makePostCall(e) {
+
+      var form = document.querySelector('form');
+      var data = new FormData(form);
+
+      for (var key of data.keys()) {
+        console.log(key + ' --- ' + data.get(key));
+      }
+      console.log(' id is ' + data.get('id'));
+      console.log(' >>> ' + JSON.stringify(data));
+
+      makeRequest('POST', "/case/" + data.get('id'), data).then(function (data) {
+        var results = JSON.parse(data);
+      });
+
+    }
+
+    function makeRequest(method, url, data) {
+      return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open(method, url);
+        xhr.onload = function () {
+          if (this.status >= 200 && this.status < 300) {
+            resolve(xhr.response);
+          } else {
+            reject({
+              status: this.status,
+              statusText: xhr.statusText
+            });
+          }
+        };
+        xhr.onerror = function () {
+          reject({
+            status: this.status,
+            statusText: xhr.statusText
+          });
+        };
+        if (method == "POST" && data) {
+          var object = {};
+          data.forEach((value, key) => object[key] = value);
+          console.log('In makeRequest -- ' + JSON.stringify(object));
+          xhr.send(data);
+        } else {
+          xhr.send();
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

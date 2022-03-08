@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>List of Cases</title>
+  </head>
+  <body>
+      <a href="/users/logout" >Logout</a>
+      <a href="/users/dashboard">Dashboard</a>
+    <h1>List of Cases</h1>
+    <table class="table table-inverse">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Id</th>
+          <th>Origin</th> 
+          <th>Subject</th>
+          <th>Status</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+    
+      <tbody>
+        <% for(var i=0; i < cases.length; i++) { %>
+        <tr>
+          <td><a href="/case/<%=cases[i].id%>" > View </a> </td>
+          <td><%= cases[i].id %></td>
+          <td><%= cases[i].origin %></td>
+          <td><%= cases[i].subject %></td>
+          <td><%= cases[i].status %></td>
+          <td><%= cases[i].description %></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <!--
+    <% if (typeof message !== 'undefined' ) { %>
+    <p><%= message %></p>
+    <% } %>
+
+    <a href="/users/login">Login</a>
+    -->
+  </body>
+</html>

@@ -12,10 +12,10 @@ function initialize(passport) {
                 if(err) {
                     throw err;
                 }
-                console.log('results >>> '+JSON.stringify(results));
+                //console.log('results >>> '+JSON.stringify(results));
                 if(results.rows.length > 0) {
                     const user = results.rows[0];
-                    console.log('password >>> '+password+' user.password >>> '+results.rows[0].password__c);
+                    //console.log('password >>> '+password+' user.password >>> '+results.rows[0].password__c);
                     bcrypt.compare(password,results.rows[0].password__c, (err,isMatch)=>{
                         if(err) {
                             throw err;
