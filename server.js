@@ -10,10 +10,10 @@ const passport = require("passport");
 const initializePassport = require("./passportConfig");
 const { request } = require("express");
 initializePassport(passport);
-const SLDS_DIR = "/node_modules/@salesforce-ux/design-system/assets";
+//const SLDS_DIR = "/node_modules/@salesforce-ux/design-system/assets";
 var bodyParser = require("body-parser");
 var multer = require("multer");
-const { DeleteCompositeSubrequestBuilder } = require("@salesforce/salesforce-sdk/dist/api/unit-of-work/CompositeSubrequest");
+//const { DeleteCompositeSubrequestBuilder } = require("@salesforce/salesforce-sdk/dist/api/unit-of-work/CompositeSubrequest");
 var forms = multer();
 const PORT = process.env.PORT || 4000;
 
@@ -41,7 +41,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-app.use("/slds", express.static(__dirname + SLDS_DIR));
+//app.use("/slds", express.static(__dirname + SLDS_DIR));
 
 // for parsing application/json
 app.use(bodyParser.json());
