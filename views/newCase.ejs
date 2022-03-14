@@ -15,7 +15,6 @@
   <a href="/users/dashboard">Dashboard</a>
   <h1>Case</h1>
  
-
   <ul>
       <%if(messages.success_msg){%>
       <li><%=messages.success_msg%></li>
@@ -27,7 +26,7 @@
       <%}%>
   </ul>
 
-  <form action="/case/<%=caseId%>" method="post">
+  <form action="/newCase" method="post">
     <fieldset>
     <% for (var i = 0; i < caseObj.length; i++) { %>
       <label for="fname"><%= caseObj[i].label %>:</label>
@@ -35,7 +34,7 @@
       <input  type="text" 
               id="<%= caseObj[i].apiName %>" 
               name="<%= caseObj[i].apiName %>" 
-              value="<%= caseObj[i].value %>"  readonly >             
+              value="<%= caseObj[i].value %>"  disabled >             
       <% }else{ %>
         <input  type="text" 
         id="<%= caseObj[i].apiName %>" 
@@ -44,10 +43,11 @@
         <% } %>      
         <br>        
     <% } %>  
-    <input type = "submit" value="Update Case"/>
+    <input type = "submit" value="Create Case"/>
+    
   </fieldset>
   </form>
-  
+
 </body>
 
 </html>

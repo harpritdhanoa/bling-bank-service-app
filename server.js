@@ -13,10 +13,12 @@ initializePassport(passport);
 const SLDS_DIR = "/node_modules/@salesforce-ux/design-system/assets";
 var bodyParser = require("body-parser");
 var multer = require("multer");
+const { DeleteCompositeSubrequestBuilder } = require("@salesforce/salesforce-sdk/dist/api/unit-of-work/CompositeSubrequest");
 var forms = multer();
 const PORT = process.env.PORT || 4000;
 
 var oldCase = {};
+var caseObj = [];
 var caseFields = {
   id: "Case Id",
   origin: "Origin",
@@ -64,17 +66,29 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
 });
 
 app.get("/cases", checkNotAuthenticated, fetchCases, (req, res) => {
-  res.render("cases", { user: req.user.name });
+  //res.render("cases", { user: req.user.name });
 });
 
 app.get("/case/:id", checkNotAuthenticated, fetchCase, (req, res) => {
-  console.log(" before render");
-  res.render("case", { case: req.case });
 });
 
 app.post("/case/:id", checkNotAuthenticated, updateCase, (req, res) => {
-  console.log(" before update");
-  res.render("case", { case: req.case });
+});
+
+app.get("/newCase", checkNotAuthenticated, (req, res) => {
+  console.log(" before render");
+  this.caseObj = [];
+  for (var key in caseFields) {
+    this.caseObj.push({
+      apiName: key,
+      label: caseFields[key],
+      value: '',
+    });
+  }
+  res.render("newCase", { caseObj: this.caseObj });
+});
+
+app.post("/newCase", checkNotAuthenticated, createCase, (req, res) => {
 });
 
 app.get("/users/logout", (req, res) => {
@@ -208,19 +222,16 @@ function fetchCase(req, res, next) {
         throw err;
       }
       if (results.rows.length > 0) {
-        //console.log(results.rows);
-        req.flash("success_msg", "Case retreived");
-        var caseObj = [];
+        this.caseObj = [];
         for (var key in caseFields) {
-          caseObj.push({
+          this.caseObj.push({
             apiName: key,
             label: caseFields[key],
             value: results.rows[0][key],
           });
         }
-        console.log(" caseObj >>>> " + JSON.stringify(caseObj));
-
-        res.render("case", { caseObj: caseObj }, function (err, html) {
+        console.log(" this.caseObj >>>> " + JSON.stringify(this.caseObj));
+        res.render("case", { caseObj: this.caseObj, caseId:results.rows[0].id  }, function (err, html) {
           if (err) {
             throw err;
           }
@@ -256,16 +267,9 @@ function updateCase(req, res, next) {
 
   // Only add fields if their values have changed
   for (var key in req.body) {
-    for (var oKey in this.oldCase) {
-      if (
-        key == oKey &&
-        req.body[key] != this.oldCase[oKey] &&
-        !(this.oldCase[oKey] == null && req.body[key] == "")
-      ) {
-        part2 += ` ${key} = '${req.body[key]}',`;
-      }
-    }
+    part2 += ` ${key} = '${req.body[key]}',`;
   }
+  // Clean the comma at the end!
   if (part2 != "") part2 = part2.substring(0, part2.length - 1);
 
   console.log(" SQL query --> ");
@@ -280,28 +284,43 @@ function updateCase(req, res, next) {
       }
       //console.log(JSON.stringify(results));
       if (results.rows && results.rows.length == 1) {
+        console.log(' ------record updated ' );
         req.flash("success_msg", "Case Updated");
-
-        var caseObj = [];
-        for (var key in caseFields) {
-          caseObj.push({
-            apiName: key,
-            label: caseFields[key],
-            value: results.rows[0][key],
-          });
-        }
-        console.log(" caseObj >>>> " + JSON.stringify(caseObj));
-
-        res.render("case", { caseObj: caseObj }, function (err, html) {
-          if (err) {
-            throw err;
-          }
-          this.oldCase = results.rows[0];
-          res.send(html);
-        });
+        res.redirect('/case/'+results.rows[0].id);
       }
       if (results.rows.length == 0) {
         errors.push({ message: "Case not updated" });
+        res.render("case", { errors });
+      }
+      //pool.end();
+    });
+  }
+}
+
+function createCase(req, res, next) {
+  console.log(" ++ createCase ++");
+
+  const part1 = "INSERT INTO arch.case ("+Object.keys(req.body).join(",")+") ";
+  const part2 = "VALUES ("+Object.values(req.body).map(str => `'${str}'`).join(",")+") ";
+  const part3 = "RETURNING * ";
+
+  console.log(" SQL query --> ");
+  console.log(part1);
+  console.log(part2);
+  console.log(part3);
+
+  if (Object.keys(req.body).length > 0) {
+    pool.query(part1 + part2 + part3, (err, results) => {
+      if (err) {
+        throw err;
+      }
+      if (results.rows && results.rows.length == 1) {
+        console.log(' ------record created with id '+results.rows[0]['id'] );
+        req.flash("success_msg", "case created");
+        res.redirect("/case/"+results.rows[0]['id']);
+      }
+      if (results.rows.length == 0) {
+        errors.push({ message: "Case not created" });
         res.render("case", { errors });
       }
       //pool.end();

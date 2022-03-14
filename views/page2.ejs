@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Page2</title>
+</head>
+
+<body>
+  
+  <h1>Page2</h1>
+ 
+  <ul>
+      <%if(messages.success_msg){%>
+      <li><%=messages.success_msg%></li>
+      <%}%>
+  </ul>
+  <ul>
+      <%if(messages.error){%>
+      <li><%=messages.error%></li>
+      <%}%>
+  </ul>
+
+  <!--
+    <% if (typeof message !== 'undefined' ) { %>
+    <p><%= message %></p>
+    <% } %>
+
+    <a href="/users/login">Login</a>
+    -->
+</body>
+
+</html>

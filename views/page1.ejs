@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Case</title>
+</head>
+
+<body>
+  
+  <h1>Page1</h1>
+ 
+
+  <ul>
+      <%if(messages.success_msg){%>
+      <li><%=messages.success_msg%></li>
+      <%}%>
+  </ul>
+  <ul>
+      <%if(messages.error){%>
+      <li><%=messages.error%></li>
+      <%}%>
+  </ul>
+
+  
+ 
+
+  <!--
+    <% if (typeof message !== 'undefined' ) { %>
+    <p><%= message %></p>
+    <% } %>
+
+    <a href="/users/login">Login</a>
+    -->
+
+    <form action="/page1" method ="POST">
+      <div>
+          <input type = "text" id="name" name="name" placeholder="Name" /> 
+      </div>
+      <div>
+          <input type = "email" id="email" name="email" placeholder="Email" />
+      </div>
+      <div>
+          <input type = "password" id="password" name="password" placeholder="Password" />
+      </div>
+      <div>
+          <input type = "password" id="password2" name="password2" placeholder="Retype Password" />
+      </div>
+      <div>
+          <input type = "submit" value="Register"/>
+      </div>
+      <a href="/users/login"> Already registered? Login here</a>
+  </form>
+
+
+
+    <form id="formElem">
+      <input type="text" name="name" value="John">
+      <input type="text" name="surname" value="Smith">
+      <input type="submit">
+    </form>
+    
+    <script>
+      formElem.onsubmit = async (e) => {
+        e.preventDefault();
+        makeRequest('POST','/page1',new FormData(formElem)).then(function (data) {
+          //var results = JSON.parse(data);
+          console.log(' res '+JSON.parse(data));
+        });
+        /*let response = await fetch('/page1', {
+          method: 'POST',
+          body: new FormData(formElem)
+        });
+    
+        let result = await response.json();
+    
+        console.log(JSON.stringify(result)); */
+      };
+
+      function makeRequest(method, url, data) {
+        return new Promise(function (resolve, reject) {
+          var xhr = new XMLHttpRequest();
+          xhr.open(method, url);
+          xhr.onload = function () {
+            var json = JSON.parse(xhr.responseText);
+            var message = json.message; // or json["Data"]
+            console.log(' message -- '+JSON.stringify(message));
+            console.log(' in  onload >> this.status >> '+this.status+' xhr.statusText >> '+xhr.statusText);
+
+            if (this.status >= 200 && this.status < 300) {
+              resolve(xhr.response);
+              location.href = message;
+            } else {
+              reject({
+                status: this.status,
+                statusText: xhr.statusText
+              });
+            }
+          };
+          xhr.onerror = function () {
+            console.log(' in  onerror >> this.status >> '+this.status+' xhr.statusText >> '+xhr.statusText);
+            reject({
+              status: this.status,
+              statusText: xhr.statusText
+            });
+          };
+          if (method == "POST" && data) {
+            var object = {};
+            xhr.send(data);
+          } else {
+            xhr.send();
+          }
+        });
+      }
+
+    </script>
+
+    
+</body>
+
+</html>
